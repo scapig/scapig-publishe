@@ -15,6 +15,7 @@ scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq( ws, guice )
 libraryDependencies += "com.typesafe.play" %% "play-json-joda" % "2.6.0"
+libraryDependencies += "org.raml" % "raml-parser-2" % "1.0.3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "org.mockito" % "mockito-all" % "1.10.19" % "test"

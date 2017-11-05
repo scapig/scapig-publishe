@@ -1,0 +1,14 @@
+#%RAML 1.0
+
+title: Employers PAYE Service
+version: 1.0
+baseUri: http://employers-paye.service
+- bad mix
+mediaType: application/json
+/:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: sPring
