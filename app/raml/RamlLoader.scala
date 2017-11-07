@@ -1,6 +1,7 @@
 package raml
 
 import java.io.File
+import javax.inject.{Inject, Singleton}
 
 import models.{RamlNotFoundException, RamlParseException, RamlUnsupportedVersionException}
 import org.raml.v2.api.loader._
@@ -61,7 +62,8 @@ class StringRamlLoader extends RamlLoader {
   }
 }
 
-class UrlRamlLoader extends RamlLoader {
+@Singleton
+class UrlRamlLoader @Inject()() extends RamlLoader {
   override def load(url: String) = {
     val builder = new RamlModelBuilder(new UrlResourceLoader())
     verify(builder.buildApi(url))

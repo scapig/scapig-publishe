@@ -17,6 +17,8 @@ case class ErrorInvalidRequest(errorMessage: String) extends ErrorResponse(BAD_R
 case class ErrorInternalServerError(errorMessage: String) extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", errorMessage)
 case class ErrorNotFound() extends ErrorResponse(NOT_FOUND, "NOT_FOUND", "The resource could not be found.")
 
+class ValidationException(message: String) extends RuntimeException(message)
+
 case class RamlParseException(msg: String) extends RuntimeException(msg)
 case class RamlNotFoundException(msg: String) extends RuntimeException(msg)
 case class RamlUnsupportedVersionException(msg: String) extends RuntimeException(msg)

@@ -13,6 +13,8 @@ object JsonFormatters {
   implicit val formatAPIDefinition: OFormat[APIDefinition] = Json.format[APIDefinition]
   implicit val formatScope: OFormat[Scope] = Json.format[Scope]
 
+  implicit val formatAPICreateRequest = Json.format[APICreateRequest]
+
   implicit val errorResponseWrites = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }

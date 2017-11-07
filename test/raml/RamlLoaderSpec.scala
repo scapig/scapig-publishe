@@ -27,16 +27,8 @@ class RamlLoaderSpec extends WordSpec with Matchers {
   "Bad RAML" should {
     "result in a parse exception" in {
       new ClasspathRamlLoader().load("bad_yaml.raml") match {
-        case Failure(e: RamlParseException) => e.getMessage shouldBe
-          """Underlying error while parsing YAML syntax: 'while parsing a block mapping
-            | in 'reader', line 3, column 1:
-            |    title: Employers PAYE Service
-            |    ^
-            |expected <block end>, but found BlockEntry
-            | in 'reader', line 6, column 1:
-            |    - bad mix
-            |    ^
-            |' --  [line=6, col=1]""".stripMargin
+        case Failure(e: RamlParseException) =>
+          e.getMessage should include ("Underlying error while parsing YAML syntax: 'while parsing a block mapping")
         case _ => throw new IllegalStateException("should not reach here")
       }
     }
