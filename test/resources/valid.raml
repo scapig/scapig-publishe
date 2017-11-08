@@ -1,0 +1,52 @@
+#%RAML 1.0
+---
+
+title: Individuals
+version: P1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+ - title: Testing
+   content: !include docs/testing.md
+
+mediaType: [ application/json, application/hal+json ]
+
+uses:
+  sec: include/securitySchemes.raml
+  headers: include/headers.raml
+  annotations: include/annotations.raml
+
+/individuals:
+  /:
+    get:
+      displayName: Entry point
+      description: This is the entry point to the API and returns one or more links.
+      is: [headers.acceptHeader]
+      (annotations.scope): "read:individuals"
+      securedBy: [ sec.oauth_2_0: { scopes: [ "read:individuals" ] } ]
+      (annotations.sandboxData): !include docs/root.md
+      headers:
+        Authorization:
+          description: OAuth 2.0 Bearer Token with the read:individuals scope.
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+      responses:
+        200:
+          description: The resource available to match an individual
+          body:
+            application/json:
+              example: !include docs/examples/root.json
+              type: !include docs/examples/schema.json
+    options:
+      displayName: Entry point supported HTTP methods
+      description: Retrieve the list of supported HTTP methods
+      responses:
+        204:
+          headers:
+            Allow:
+              description: The list of supported HTTP methods
+              example: GET

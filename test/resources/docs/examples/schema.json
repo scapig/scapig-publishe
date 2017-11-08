@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Individual",
+  "type": "object",
+  "properties": {
+    "_links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "object",
+          "description": "HAL compliant. Refers to itself",
+          "properties": {
+            "href": {
+              "type": "string",
+              "example": "/individuals/"
+            }
+          },
+          "required": ["href"]
+        },
+        "match": {
+          "type": "object",
+          "description": "The URI for the resource to match individual's details.",
+          "properties": {
+            "href": {
+              "type": "string",
+              "example": "/individuals/matching/"
+            },
+            "name": {
+              "type": "string",
+              "example": "POST"
+            },
+            "title": {
+              "type": "string",
+              "example": "Match individual"
+            }
+          },
+          "required": ["href"]
+        }
+      },
+      "required": ["self", "match"]
+    }
+  },
+  "required": ["_links"]
+}

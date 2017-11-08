@@ -13,7 +13,6 @@ import scala.util.{Failure, Success, Try}
 
 trait RamlLoader {
 
-  type RAML = Api
 
   private val RamlDoesNotExist = "Raml does not exist at:"
   private val unsupportedSpecVersion: Try[RAML] = Failure(RamlUnsupportedVersionException("Only RAML1.0 is supported"))

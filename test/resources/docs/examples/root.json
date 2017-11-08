@@ -1,0 +1,12 @@
+{
+  "_links": {
+    "match": {
+      "href": "/individuals/matching/",
+      "name": "POST",
+      "title": "Match individual"
+    },
+    "self": {
+      "href": "/individuals/"
+    }
+  }
+}
