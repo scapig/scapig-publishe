@@ -7,6 +7,19 @@ version: P1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
 
+(annotations.context): individuals
+(annotations.serviceUrl): http://localhost:7070
+(annotations.status): PUBLISHED
+(annotations.scopes):
+  -
+    key: "read:individuals"
+    name: "Scope Name"
+    description: "Scope Description"
+  -
+    key: "read:individuals2"
+    name: "Scope Name2"
+    description: "Scope Description2"
+
 documentation:
  - title: Overview
    content: !include docs/overview.md
@@ -19,24 +32,6 @@ uses:
   sec: include/securitySchemes.raml
   headers: include/headers.raml
   annotations: include/annotations.raml
-
-(annotations.context): individuals
-(annotations.status): PUBLISHED
-(annotations.scope):
-  key: "read:individuals"
-  name: "Scope Name"
-  description: "Scope Description"
-(annotations.scopes):
-  -
-    key: "read:individuals"
-    name: "Scope Name"
-    description: "Scope Description"
-  -
-    key: "read:individuals2"
-    name: "Scope Name2"
-    description: "Scope Description2"
-
-(annotations.serviceUrl): http://localhost:7070
 
 /individuals:
   /:

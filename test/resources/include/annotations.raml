@@ -3,16 +3,7 @@
 usage: Collection of common annotations
 
 annotationTypes:
-  config: object
-  group:
-    type: object
-    properties:
-      name: string
-      description: string
-  fieldOptionalityUnknown: nil
   sandboxData:
-  deprecationMessage:
-  documentation:
   status:
     enum: [ PUBLISHED, PROTOTYPED, RETIRED ]
     required: true
@@ -27,14 +18,5 @@ annotationTypes:
           required: true
         description:
           required: true
-  scope:
-    type: object
-    properties:
-      key:
-        required: true
-      name:
-        required: true
-      description:
-        required: true
   context:
   serviceUrl:

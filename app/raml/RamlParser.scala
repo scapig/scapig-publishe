@@ -2,6 +2,7 @@ package raml
 
 import models.AuthType.{APPLICATION, AuthType, NONE, USER}
 import models._
+import org.raml.v2.api.model.v10.datamodel.TypeInstance
 import org.raml.v2.api.model.v10.declarations.AnnotationRef
 import org.raml.v2.api.model.v10.methods.Method
 import org.raml.v2.api.model.v10.resources.Resource
@@ -9,12 +10,19 @@ import org.raml.v2.api.model.v10.resources.Resource
 import scala.util.matching.Regex
 import scala.collection.JavaConversions._
 
-object RamlEndpoints {
-  def apply(raml: RAML): Seq[Endpoint] = {
-    if(raml.resources().size() != 1) {
+class RamlParser {
+  def parseAPIVersion(raml: RAML): APIVersionRequest = {
+    val context = getValue("(annotations.context)", raml)
+    val status = APIStatus.withName(getValue("(annotations.status)", raml))
+    val serviceUrl = getValue("(annotations.serviceUrl)", raml)
+
+    if (raml.resources().size() > 1) {
       throw RamlUnsupportedVersionException("Only one root segment should be defined in the RAML")
     }
-    val context = raml.resources().head.resourcePath()
+    if(!raml.resources().headOption.map(_.resourcePath()).contains(s"/$context")) {
+      throw RamlUnsupportedVersionException("The root segment should be the context")
+    }
+
     val endpoints = for {
       endpoint <- raml.flattenedResources
       method <- endpoint.methods
@@ -28,35 +36,36 @@ object RamlEndpoints {
         getQueryParams(method)
       )
     }
-    val status = getValue("(annotations.status)", raml)
-    val aContext = getValue("(annotations.context)", raml)
-    val scopes = getScopes(raml)
-    val scopesNew = getScopesNew(raml)
 
-    /*
-    val scopes = raml.annotations.toList.find(_.name == "(annotations.scope)")
-    val scopeKey = scopes.flatMap(getPropertyValue("key"))
-    val scopeDescription = scopes.flatMap(getPropertyValue("description"))
-    val scopeName = scopes.flatMap(getPropertyValue("name"))
-*/
-    endpoints
+    APIVersionRequest(
+      context,
+      raml.title().value(),
+      raml.description().value(),
+      raml.version().value(),
+      serviceUrl,
+      status,
+      endpoints)
   }
 
-  private def getScopesNew(raml: RAML) = {
-    val scope1Key = raml.annotations.toList.filter(_.name == "(annotations.scopes)") map (_.structuredValue().properties().head.values().get(0).properties().get(0).value().value())
-    scope1Key
+  def parseScopes(raml: RAML): Seq[Scope] = {
+    raml.annotations.toList.filter(_.name == "(annotations.scopes)") flatMap (_.structuredValue().properties() flatMap { annotation =>
+      annotation.values() map { scope =>
+        Scope(getPropertyValue("key")(scope), getPropertyValue("name")(scope), getPropertyValue("description")(scope))
+      }
+    })
   }
 
-  private def getScopes(raml: RAML) = {
-    raml.annotations.toList.filter(_.name == "(annotations.scope)").map { item =>
-      Scope(getPropertyValue("key", item), getPropertyValue("name", item), getPropertyValue("description", item))
-    }
+  private def getPropertyValue(propertyName: String)(instance: TypeInstance): String = {
+    instance.properties().find(_.name() == propertyName)
+      .getOrElse(throw RamlNotFoundException(s"Property not found $propertyName in $instance"))
+      .value().value().toString
   }
 
-  private def getValue(name: String, raml: RAML) = {
+  private def getValue(name: String, raml: RAML): String = {
     raml.annotations.toList
       .find(_.name == name)
       .map(_.structuredValue().value().toString)
+      .getOrElse(throw RamlNotFoundException(s"Property not found $name"))
   }
 
   private def getPropertyValue(name: String, annotationRef: AnnotationRef): String = {

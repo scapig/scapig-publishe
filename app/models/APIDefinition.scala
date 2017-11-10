@@ -1,22 +1,13 @@
 package models
 
-import org.raml.v2.api.model.v10.methods.Method
-import org.raml.v2.api.model.v10.resources.Resource
-
-import scala.util.matching.Regex
-
 case class Scope(key: String, name: String, description: String)
 
-case class APIDefinition(
-                          serviceName: String,
-                          serviceBaseUrl: String,
-                          name: String,
-                          description: String,
-                          context: String,
-                          versions: Seq[APIVersion])
-
-case class APIVersion(
+case class APIVersionRequest(
+                       context: String,
+                       apiName: String,
+                       apiDescription: String,
                        version: String,
+                       serviceBaseUrl: String,
                        status: APIStatus.Value,
                        endpoints: Seq[Endpoint])
 

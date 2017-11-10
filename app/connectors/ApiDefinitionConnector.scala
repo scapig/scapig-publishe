@@ -3,7 +3,7 @@ package connectors
 import javax.inject.Inject
 
 import config.AppContext
-import models.{APIDefinition, HasSucceeded}
+import models.{APIVersionRequest, HasSucceeded}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSClient, WSResponse}
@@ -16,7 +16,7 @@ class ApiDefinitionConnector @Inject()(appContext: AppContext, wsClient: WSClien
 
   val serviceUrl = appContext.serviceUrl("tapi-definition")
 
-  def createAPI(api: APIDefinition): Future[HasSucceeded] = {
+  def publishAPIVersion(api: APIVersionRequest): Future[HasSucceeded] = {
     wsClient.url(s"$serviceUrl/api-definition").post(Json.toJson(api)) map {
       case response if response.status == Status.NO_CONTENT => HasSucceeded
       case r: WSResponse => throw new RuntimeException(s"Invalid response from tapi-definition ${r.status} ${r.body}")
