@@ -1,6 +1,6 @@
 package models
 
-case class Scope(key: String, name: String, description: String)
+case class Scope(key: String, name: String)
 
 case class APIVersionRequest(
                        context: String,

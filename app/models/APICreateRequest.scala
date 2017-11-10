@@ -1,3 +1,3 @@
 package models
 
-case class APICreateRequest (ramlFileUrls: Seq[String])
+case class APIVersionCreateRequest(ramlFileUrl: String)

@@ -50,7 +50,7 @@ class RamlParser {
   def parseScopes(raml: RAML): Seq[Scope] = {
     raml.annotations.toList.filter(_.name == "(annotations.scopes)") flatMap (_.structuredValue().properties() flatMap { annotation =>
       annotation.values() map { scope =>
-        Scope(getPropertyValue("key")(scope), getPropertyValue("name")(scope), getPropertyValue("description")(scope))
+        Scope(getPropertyValue("key")(scope), getPropertyValue("name")(scope))
       }
     })
   }

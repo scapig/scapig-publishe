@@ -20,7 +20,7 @@ class ApiScopeConnectorSpec extends UnitSpec with BeforeAndAfterAll with BeforeA
     .build()
   val wireMockServer = new WireMockServer(wireMockConfig().port(port))
 
-  val scope = Scope("scope1", "scopeName", "scopeDescription")
+  val scope = Scope("scope1", "scopeName")
 
   override def beforeAll {
     configureFor(port)
