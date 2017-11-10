@@ -9,8 +9,32 @@ annotationTypes:
     properties:
       name: string
       description: string
-  scope:
   fieldOptionalityUnknown: nil
   sandboxData:
   deprecationMessage:
   documentation:
+  status:
+    enum: [ PUBLISHED, PROTOTYPED, RETIRED ]
+    required: true
+  scopes:
+    type: array
+    items:
+      type: object
+      properties:
+        key:
+          required: true
+        name:
+          required: true
+        description:
+          required: true
+  scope:
+    type: object
+    properties:
+      key:
+        required: true
+      name:
+        required: true
+      description:
+        required: true
+  context:
+  serviceUrl:

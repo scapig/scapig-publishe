@@ -2,6 +2,7 @@
 ---
 
 title: Individuals
+description: Individuals Description
 version: P1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
@@ -19,13 +20,30 @@ uses:
   headers: include/headers.raml
   annotations: include/annotations.raml
 
+(annotations.context): individuals
+(annotations.status): PUBLISHED
+(annotations.scope):
+  key: "read:individuals"
+  name: "Scope Name"
+  description: "Scope Description"
+(annotations.scopes):
+  -
+    key: "read:individuals"
+    name: "Scope Name"
+    description: "Scope Description"
+  -
+    key: "read:individuals2"
+    name: "Scope Name2"
+    description: "Scope Description2"
+
+(annotations.serviceUrl): http://localhost:7070
+
 /individuals:
   /:
     get:
       displayName: Entry point
       description: This is the entry point to the API and returns one or more links.
       is: [headers.acceptHeader]
-      (annotations.scope): "read:individuals"
       securedBy: [ sec.oauth_2_0: { scopes: [ "read:individuals" ] } ]
       (annotations.sandboxData): !include docs/root.md
       headers:

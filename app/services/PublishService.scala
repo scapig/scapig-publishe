@@ -2,8 +2,8 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import models.APICreateRequest
-import raml.{FileRamlLoader, RamlEndpoint, UrlRamlLoader}
+import models.{APICreateRequest, Endpoint}
+import raml.{FileRamlLoader, RamlEndpoints, UrlRamlLoader}
 
 import scala.util.Try
 
@@ -11,11 +11,10 @@ import scala.util.Try
 class PublishService @Inject()(urlRamlLoader: UrlRamlLoader, fileRamlLoader: FileRamlLoader) {
 
   def publish(apiCreateRequest: APICreateRequest): Boolean = {
-    val raml = apiCreateRequest.ramlFileUrl match {
-      case url if url.startsWith("http") => urlRamlLoader.load(apiCreateRequest.ramlFileUrl).get
-      case _ => fileRamlLoader.load(apiCreateRequest.ramlFileUrl).get
-    }
-    val endpoints = RamlEndpoint(raml)
+    val endpoints: Seq[Seq[Endpoint]] = apiCreateRequest.ramlFileUrls map {
+      case ramlFileUrl if ramlFileUrl.startsWith("http") => urlRamlLoader.load(ramlFileUrl).get
+      case ramlFileUrl => fileRamlLoader.load(ramlFileUrl).get
+    } map (RamlEndpoints(_))
     false
   }
 }
