@@ -51,11 +51,14 @@ class RamlParser {
 
   def parseScopes(raml: RAML): Try[Seq[Scope]] = {
     Try {
-      raml.annotations.toList.filter(_.name == "(annotations.scopes)") flatMap (_.structuredValue().properties() flatMap { annotation =>
+      val scopes = raml.annotations.toList.filter(_.name == "(annotations.scopes)") flatMap (_.structuredValue().properties() flatMap { annotation =>
         annotation.values() map { scope =>
           Scope(getPropertyValue("key")(scope), getPropertyValue("name")(scope))
         }
       })
+      val undefinedScopes = getAllEndpointScopes(raml).toSet.diff(scopes.map(_.key).toSet)
+      if(undefinedScopes.nonEmpty) throw RamlParseException(s"Scopes [${undefinedScopes.mkString(",")}] are not defined in the RAML")
+      scopes
     }
   }
 
@@ -78,6 +81,10 @@ class RamlParser {
       case "oauth_2_0" :: _ => USER
       case "x-application" :: _ => APPLICATION
     }
+  }
+
+  private def getAllEndpointScopes(raml: RAML): Seq[String] = {
+    raml.flattenedResources.flatMap(_.methods().flatMap(getScope))
   }
 
   private def getScope(method: Method): Option[String] = {

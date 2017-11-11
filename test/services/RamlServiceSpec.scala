@@ -35,7 +35,7 @@ class RamlServiceSpec extends UnitSpec with MockitoSugar {
 
       val result = underTest.parseRaml("/ramlurl")
 
-      result shouldBe Right((expectedApi, Seq(scope)))
+      result shouldBe Success((expectedApi, Seq(scope)))
     }
 
     "fail when the RAML file can not be loaded" in new Setup {
@@ -44,7 +44,7 @@ class RamlServiceSpec extends UnitSpec with MockitoSugar {
 
       val result = underTest.parseRaml("/ramlurl")
 
-      result shouldBe Left(error)
+      result shouldBe Failure(error)
     }
 
     "fail when the API Version can not be parsed" in new Setup {
@@ -53,17 +53,16 @@ class RamlServiceSpec extends UnitSpec with MockitoSugar {
 
       val result = underTest.parseRaml("/ramlurl")
 
-      result shouldBe Left(error)
+      result shouldBe Failure(error)
     }
 
-    "fail when the API Version can not be parsed" in new Setup {
+    "fail when the Scopes can not be parsed" in new Setup {
       val error = new RuntimeException("test error")
       given(ramlParser.parseScopes(raml)).willReturn(Failure(error))
 
       val result = underTest.parseRaml("/ramlurl")
 
-      result shouldBe Left(error)
+      result shouldBe Failure(error)
     }
-
   }
 }

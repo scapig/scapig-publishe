@@ -1,0 +1,85 @@
+#%RAML 1.0
+---
+title: Hello World
+description: Hello World API
+version: 2.0
+protocols: [ HTTPS ]
+baseUri: https://helloworld.service.hmrc.gov.uk/
+
+(annotations.context): hello
+(annotations.serviceUrl): http://localhost:8080
+(annotations.status): PUBLISHED
+(annotations.scopes):
+  -
+    key: "hello"
+    name: "Say hello"
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+
+mediaType: application/hal+json
+
+uses:
+  sec: include/securitySchemes.raml
+  headers: include/headers.raml
+  annotations: include/annotations.raml
+
+/hello:
+  /world:
+    get:
+      displayName: Say hello world
+      description: |
+        A simple example for integrating with an unrestricted service.
+
+        Any request to this endpoint initiates a 'Hello World' response.
+      is: [headers.acceptHeader]
+      queryParameters:
+        myRequiredParam:
+          type: string
+          required: true
+        myOptionalParam:
+          type: string
+          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message" : "Hello World"
+                }
+  /user:
+    post:
+      displayName: Say hello user
+      description: |
+        A simple example for integrating with a user-restricted service, using an OAuth 2.0 `access_token`.
+
+        Any authorised request to this endpoint initiates a 'Hello User' response.
+      is: [headers.acceptHeader]
+      securedBy: [ sec.oauth_2_0: { scopes: [ "hello" ] } ]
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Hello User"
+                }
+  /application:
+    put:
+      displayName: Say hello application
+      description: |
+        A simple example for integrating with an application-restricted service, using your `server_token`.
+
+        Any authorised request to this endpoint initiates a 'Hello Application' response.
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Hello Application"
+                }
