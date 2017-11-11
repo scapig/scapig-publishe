@@ -1,22 +1,19 @@
 #%RAML 1.0
 ---
 
-title: Individuals
-description: Individuals Description
-version: P1.0
+title: Calendar API
+description: My Calendar API
+version: 1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
 
-(annotations.context): individuals
-(annotations.serviceUrl): http://localhost:7070
+(annotations.context): calendar
+(annotations.serviceUrl): http://localhost:8080
 (annotations.status): PUBLISHED
 (annotations.scopes):
   -
-    key: "read:individuals"
-    name: "Scope Name"
-  -
-    key: "read:individuals2"
-    name: "Scope Name2"
+    key: "read:calendar"
+    name: "See calendar"
 
 documentation:
  - title: Overview
@@ -31,23 +28,23 @@ uses:
   headers: include/headers.raml
   annotations: include/annotations.raml
 
-/individuals:
-  /:
+/calendar:
+  /today:
     get:
-      displayName: Entry point
-      description: This is the entry point to the API and returns one or more links.
+      displayName: Get today's date
+      description: This returns today
       is: [headers.acceptHeader]
-      securedBy: [ sec.oauth_2_0: { scopes: [ "read:individuals" ] } ]
+      securedBy: [ sec.oauth_2_0: { scopes: [ "read:calendar" ] } ]
       (annotations.sandboxData): !include docs/root.md
       headers:
         Authorization:
-          description: OAuth 2.0 Bearer Token with the read:individuals scope.
+          description: OAuth 2.0 Bearer Token with the read:calendar scope.
           type: string
           required: true
           example: Bearer <BEARER_TOKEN>
       responses:
         200:
-          description: The resource available to match an individual
+          description: Today's date
           body:
             application/json:
               example: !include docs/examples/root.json
