@@ -20,8 +20,8 @@ class ApiDefinitionConnectorSpec extends UnitSpec with BeforeAndAfterAll with Be
     .build()
   val wireMockServer = new WireMockServer(wireMockConfig().port(port))
 
-  val api = APIDefinition("service", "http://service", "apiName", "apiDescription", "apiContext",
-    Seq(APIVersion("v1", APIStatus.PUBLISHED, Seq(Endpoint("hello", "Hello World endpoint", HttpMethod.GET, AuthType.NONE)))))
+  val apiVersion = APIVersionCreateRequest("apiContext", "apiName", "apiDescription", "v1", "http://localhost:8080",
+    APIStatus.PUBLISHED, Seq(Endpoint("hello", "Hello World endpoint", HttpMethod.GET, AuthType.NONE)))
 
   override def beforeAll {
     configureFor(port)
@@ -43,11 +43,11 @@ class ApiDefinitionConnectorSpec extends UnitSpec with BeforeAndAfterAll with Be
   "createAPI" should {
     "create the API in tapi-definition" in new Setup {
       stubFor(post(urlPathEqualTo("/api-definition"))
-        .withRequestBody(equalToJson(Json.toJson(api).toString()))
+        .withRequestBody(equalToJson(Json.toJson(apiVersion).toString()))
         .willReturn(aResponse()
-          .withStatus(Status.NO_CONTENT)))
+          .withStatus(Status.OK)))
 
-      val result = await(apiDefinitionConnector.createAPI(api))
+      val result = await(apiDefinitionConnector.publishAPIVersion(apiVersion))
 
       result shouldBe HasSucceeded
     }

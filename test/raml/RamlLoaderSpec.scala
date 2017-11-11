@@ -42,35 +42,4 @@ class RamlLoaderSpec extends WordSpec with Matchers {
       }
     }
   }
-
-  "UrlRewriter" should {
-
-    trait Setup {
-      val underTest = new UrlRewriter {
-        val rewrites = Map(
-          "https://developer\\.service\\.hmrc\\.gov\\.uk" -> "http://api-documentation-frontend.public.mdtp",
-          "http://api-documentation-raml-frontend\\.service" -> "http://api-documentation-frontend.public.mdtp")
-      }
-    }
-
-    "modify public dev hub URL to internal one for doc frontend" in new Setup {
-      val url = "https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md"
-      val internalUrl = "http://api-documentation-frontend.public.mdtp/api-documentation/assets/common/docs/errors.md"
-
-      underTest.rewriteUrl(url) shouldBe internalUrl
-    }
-
-    "modify raml doc frontend URL to one for doc frontend" in new Setup {
-      val url = "http://api-documentation-raml-frontend.service/api-documentation/assets/common/docs/errors.md"
-      val internalUrl = "http://api-documentation-frontend.public.mdtp/api-documentation/assets/common/docs/errors.md"
-
-      underTest.rewriteUrl(url) shouldBe internalUrl
-    }
-
-    "not modify other URLs" in new Setup {
-      val url = "http://www.bbc.co.uk/news"
-
-      underTest.rewriteUrl(url) shouldBe url
-    }
-  }
 }

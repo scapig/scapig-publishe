@@ -52,12 +52,3 @@ uses:
             application/json:
               example: !include docs/examples/root.json
               type: !include docs/examples/schema.json
-    options:
-      displayName: Entry point supported HTTP methods
-      description: Retrieve the list of supported HTTP methods
-      responses:
-        204:
-          headers:
-            Allow:
-              description: The list of supported HTTP methods
-              example: GET

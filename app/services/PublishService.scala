@@ -3,29 +3,27 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.{ApiDefinitionConnector, ApiScopeConnector}
-import models.{APIVersionCreateRequest, HasSucceeded}
-import raml.{FileRamlLoader, RamlParser, UrlRamlLoader}
+import models.{APIPublishRequest, APIVersionCreateRequest, HasSucceeded}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Try
+import scala.concurrent.Future.failed
+import scala.util.{Failure, Success}
 
 @Singleton
-class PublishService @Inject()(urlRamlLoader: UrlRamlLoader,
-                               fileRamlLoader: FileRamlLoader,
-                               ramlParser: RamlParser,
+class PublishService @Inject()(ramlService: RamlService,
                                apiScopeConnector: ApiScopeConnector,
                                apiDefinitionConnector: ApiDefinitionConnector) {
 
-  def publish(apiCreateRequest: APIVersionCreateRequest): Future[HasSucceeded] = {
-    val raml = apiCreateRequest.ramlFileUrl match {
-      case ramlFileUrl if ramlFileUrl.startsWith("http") => urlRamlLoader.load(ramlFileUrl).get
-      case ramlFileUrl => fileRamlLoader.load(ramlFileUrl).get
+  def publish(apiPublishRequest: APIPublishRequest): Future[HasSucceeded] = {
+
+    ramlService.parseRaml(apiPublishRequest.ramlFileUrl) match {
+      case Success((apiVersionRequest, apiScopes)) =>
+        for {
+          _ <- Future.sequence(apiScopes map apiScopeConnector.createScope)
+          _ <- apiDefinitionConnector.publishAPIVersion(apiVersionRequest)
+        } yield HasSucceeded
+      case Failure(e) => failed(e)
     }
-    val apiVersionRequest = ramlParser.parseAPIVersion(raml)
-    val apiScopes = ramlParser.parseScopes(raml)
-    for {
-      scopes <- Future.sequence(apiScopes map apiScopeConnector.createScope)
-      api <- apiDefinitionConnector.publishAPIVersion(apiVersionRequest)
-    } yield api
   }
 }

@@ -2,7 +2,7 @@ package models
 
 case class Scope(key: String, name: String)
 
-case class APIVersionRequest(
+case class APIVersionCreateRequest(
                        context: String,
                        apiName: String,
                        apiDescription: String,
