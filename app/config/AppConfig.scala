@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class AppContext @Inject()(configuration: Configuration) {
+class AppConfig @Inject()(configuration: Configuration) {
 
   def serviceUrl(serviceName: String): String = {
     val method = configuration.getOptional[String](s"services.$serviceName.method").getOrElse("http")

@@ -2,7 +2,7 @@ package connectors
 
 import javax.inject.Inject
 
-import config.AppContext
+import config.AppConfig
 import models.{APIVersionCreateRequest, HasSucceeded}
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import models.JsonFormatters._
 
-class ApiDefinitionConnector @Inject()(appContext: AppContext, wsClient: WSClient) {
+class ApiDefinitionConnector @Inject()(appContext: AppConfig, wsClient: WSClient) {
 
   val serviceUrl = appContext.serviceUrl("tapi-definition")
 
