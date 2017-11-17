@@ -9,7 +9,6 @@ object JsonFormatters {
   implicit val formatAPIStatus: Format[APIStatus.Value] = EnumJson.enumFormat(APIStatus)
   implicit val formatParameter: OFormat[Parameter] = Json.format[Parameter]
   implicit val formatEndpoint: OFormat[Endpoint] = Json.format[Endpoint]
-  implicit val formatAPIPublishRequest: OFormat[APIPublishRequest] = Json.format[APIPublishRequest]
   implicit val formatScope: OFormat[Scope] = Json.format[Scope]
 
   implicit val formatAPIVersionCreateRequest: OFormat[APIVersionCreateRequest] = Json.format[APIVersionCreateRequest]

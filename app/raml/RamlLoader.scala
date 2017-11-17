@@ -34,7 +34,8 @@ trait RamlLoader {
 class ClasspathRamlLoader extends RamlLoader {
   override def load(classpath: String) = {
     val builder = new RamlModelBuilder(new CompositeResourceLoader(
-      new ClassPathResourceLoader()
+      new ClassPathResourceLoader(),
+      new UrlResourceLoader()
     ))
 
     verify(builder.buildApi(classpath))

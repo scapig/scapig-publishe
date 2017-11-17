@@ -3,7 +3,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.{ApiDefinitionConnector, ApiScopeConnector}
-import models.{APIPublishRequest, APIVersionCreateRequest, HasSucceeded}
+import models.HasSucceeded
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -15,9 +15,9 @@ class PublishService @Inject()(ramlService: RamlService,
                                apiScopeConnector: ApiScopeConnector,
                                apiDefinitionConnector: ApiDefinitionConnector) {
 
-  def publish(apiPublishRequest: APIPublishRequest): Future[HasSucceeded] = {
+  def publish(ramlContent: String): Future[HasSucceeded] = {
 
-    ramlService.parseRaml(apiPublishRequest.ramlFileUrl) match {
+    ramlService.parseRaml(ramlContent) match {
       case Success((apiVersionRequest, apiScopes)) =>
         for {
           _ <- Future.sequence(apiScopes map apiScopeConnector.createScope)

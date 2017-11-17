@@ -3,16 +3,16 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import models.{APIVersionCreateRequest, Scope}
-import raml.{CombinedRamlLoader, RamlParser}
+import raml.{CombinedRamlLoader, RamlParser, StringRamlLoader}
 
 import scala.util.Try
 
 @Singleton
-class RamlService @Inject()(combinedRamlLoader: CombinedRamlLoader, ramlParser: RamlParser) {
+class RamlService @Inject()(stringRamlLoader: StringRamlLoader, ramlParser: RamlParser) {
 
-  def parseRaml(ramlUri: String): Try[(APIVersionCreateRequest, Seq[Scope])] = {
+  def parseRaml(ramlContent: String): Try[(APIVersionCreateRequest, Seq[Scope])] = {
     for {
-      raml <- combinedRamlLoader.load(ramlUri)
+      raml <- stringRamlLoader.load(ramlContent)
       apiVersionRequest <- ramlParser.parseAPIVersion(raml)
       apiScopes <- ramlParser.parseScopes(raml)
     } yield (apiVersionRequest, apiScopes)

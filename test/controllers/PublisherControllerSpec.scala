@@ -1,24 +1,24 @@
 package controllers
 
-import models.{APIPublishRequest, HasSucceeded}
+import models.HasSucceeded
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import org.scalatest.mockito.MockitoSugar
-import play.api.http.Status
-import play.api.libs.json.Json.toJson
+import play.api.http.{HeaderNames, Status}
 import play.api.test.{FakeRequest, Helpers}
 import services.PublishService
 import utils.UnitSpec
-import models.JsonFormatters._
 
 import scala.concurrent.Future.successful
+import scala.io.Source
 
 class PublisherControllerSpec extends UnitSpec with MockitoSugar {
 
-  val apiPublishRequest = APIPublishRequest("http://path/file.raml")
+  val ramlFile = "valid-without-file-dependencies.raml"
+  val ramlContent = Source.fromResource(ramlFile).mkString
 
   trait Setup {
-    val request = FakeRequest()
+    val request = FakeRequest("POST", "/")
     val publishService = mock[PublishService]
 
     val underTest = new PublishController(Helpers.stubControllerComponents(), publishService)
@@ -26,13 +26,12 @@ class PublisherControllerSpec extends UnitSpec with MockitoSugar {
 
   "publishApiVersion" should {
     "publish the API Version and returns a 204 (NoContent)" in new Setup {
-      given(publishService.publish(apiPublishRequest)).willReturn(successful(HasSucceeded))
+      given(publishService.publish(ramlContent)).willReturn(successful(HasSucceeded))
 
-      val result = await(underTest.publishApiVersion()(request.withBody(toJson(apiPublishRequest))))
+      val result = await(underTest.publishApiVersion()(request.withBody(ramlContent).withHeaders(HeaderNames.CONTENT_TYPE -> "text/plain")))
 
       status(result) shouldBe Status.NO_CONTENT
-      verify(publishService).publish(apiPublishRequest)
+      verify(publishService).publish(ramlContent)
     }
-
   }
 }

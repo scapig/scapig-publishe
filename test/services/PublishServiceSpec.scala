@@ -8,16 +8,18 @@ import org.scalatest.mockito.MockitoSugar
 import utils.UnitSpec
 
 import scala.concurrent.Future.{failed, successful}
+import scala.io.Source
 import scala.util.{Failure, Success}
 
 class PublishServiceSpec extends UnitSpec with MockitoSugar {
-
-  val apiPublishRequest = APIPublishRequest("/ramlurl")
 
   val apiVersionCreateRequest = APIVersionCreateRequest("calendar", "Calendar API", "My Calendar API", "1.0",
     "http://localhost:8080", APIStatus.PUBLISHED,
     Seq(Endpoint("/today", "Get today's date", HttpMethod.GET, AuthType.USER, Some("read:calendar"))))
   val scope = Scope("read:calendar", "View Calendar")
+
+  val ramlFile = "valid-without-file-dependencies.raml"
+  val ramlContent = Source.fromResource(ramlFile).mkString
 
   trait Setup {
     val ramlService = mock[RamlService]
@@ -26,14 +28,14 @@ class PublishServiceSpec extends UnitSpec with MockitoSugar {
 
     val underTest = new PublishService(ramlService, apiScopeConnector, apiDefinitionConnector)
 
-    when(ramlService.parseRaml(apiPublishRequest.ramlFileUrl)).thenReturn(Success(apiVersionCreateRequest, Seq(scope)))
+    when(ramlService.parseRaml(ramlContent)).thenReturn(Success(apiVersionCreateRequest, Seq(scope)))
     when(apiScopeConnector.createScope(scope)).thenReturn(successful(HasSucceeded))
     when(apiDefinitionConnector.publishAPIVersion(apiVersionCreateRequest)).thenReturn(successful(HasSucceeded))
   }
 
   "publish" should {
     "parse the raml and publish the scopes and API Version" in new Setup {
-      val result = await(underTest.publish(apiPublishRequest))
+      val result = await(underTest.publish(ramlContent))
 
       result shouldBe HasSucceeded
       verify(apiScopeConnector).createScope(scope)
@@ -41,10 +43,10 @@ class PublishServiceSpec extends UnitSpec with MockitoSugar {
     }
 
     "fail when parsing the RAML fail" in new Setup {
-      given(ramlService.parseRaml(apiPublishRequest.ramlFileUrl))
+      given(ramlService.parseRaml(ramlContent))
         .willReturn(Failure(new RuntimeException("test error")))
 
-      intercept[RuntimeException]{await(underTest.publish(apiPublishRequest))}
+      intercept[RuntimeException]{await(underTest.publish(ramlContent))}
 
       verifyZeroInteractions(apiScopeConnector)
       verifyZeroInteractions(apiDefinitionConnector)
@@ -54,7 +56,7 @@ class PublishServiceSpec extends UnitSpec with MockitoSugar {
       given(apiScopeConnector.createScope(scope))
         .willReturn(failed(new RuntimeException("test error")))
 
-      intercept[RuntimeException]{await(underTest.publish(apiPublishRequest))}
+      intercept[RuntimeException]{await(underTest.publish(ramlContent))}
 
       verifyZeroInteractions(apiDefinitionConnector)
     }
@@ -63,7 +65,7 @@ class PublishServiceSpec extends UnitSpec with MockitoSugar {
       given(apiDefinitionConnector.publishAPIVersion(apiVersionCreateRequest))
         .willReturn(failed(new RuntimeException("test error")))
 
-      intercept[RuntimeException]{await(underTest.publish(apiPublishRequest))}
+      intercept[RuntimeException]{await(underTest.publish(ramlContent))}
     }
 
   }
