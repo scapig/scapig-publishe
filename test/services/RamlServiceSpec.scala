@@ -6,8 +6,11 @@ import org.mockito.BDDMockito.given
 import org.raml.v2.internal.impl.v10.Raml10Builder
 import org.scalatest.mockito.MockitoSugar
 import raml.{ClasspathRamlLoader, CombinedRamlLoader, RamlParser, StringRamlLoader}
+import repository.RamlRepository
 import utils.UnitSpec
 
+import scala.concurrent.Future
+import scala.concurrent.Future.successful
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -16,8 +19,9 @@ class RamlServiceSpec extends UnitSpec with MockitoSugar {
   trait Setup {
     val ramlLoader = mock[StringRamlLoader]
     val ramlParser = mock[RamlParser]
+    val ramlRepository = mock[RamlRepository]
 
-    val underTest = new RamlService(ramlLoader, ramlParser)
+    val underTest = new RamlService(ramlLoader, ramlParser, ramlRepository)
 
     val ramlFile = "valid-without-file-dependencies.raml"
     val ramlContent = Source.fromResource(ramlFile).mkString
@@ -66,6 +70,16 @@ class RamlServiceSpec extends UnitSpec with MockitoSugar {
       val result = underTest.parseRaml(ramlContent)
 
       result shouldBe Failure(error)
+    }
+  }
+
+  "fetchRaml" should {
+    "return the RAML" in new Setup {
+      given(ramlRepository.fetchRAML("aContext", "aVersion")).willReturn(successful(Some(ramlContent)))
+
+      val result = await(underTest.fetchRaml("aContext", "aVersion"))
+
+      result shouldBe Some(ramlContent)
     }
   }
 }
