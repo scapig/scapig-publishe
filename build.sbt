@@ -28,6 +28,7 @@ unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/
 
 lazy val microservice = (project in file("."))
   .enablePlugins(Seq(play.sbt.PlayScala) : _*)
+  .enablePlugins(LauncherJarPlugin)
   .configs(IntTest)
   .settings(inConfig(IntTest)(Defaults.testSettings): _*)
   .settings(
