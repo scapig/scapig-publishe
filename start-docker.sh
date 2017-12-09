@@ -1,3 +1,4 @@
 #!/bin/sh
-SCRIPT=$(find . -type f -name tapi-publisher)
+SCRIPT=$(find . -type f -name scapig-publisher)
+rm -f scapig-publisher*/RUNNING_PID
 exec $SCRIPT -Dhttp.port=8040

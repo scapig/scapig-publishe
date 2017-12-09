@@ -16,7 +16,7 @@ class ApiDefinitionConnectorSpec extends UnitSpec with BeforeAndAfterAll with Be
   val port = 7001
 
   val playApplication = new GuiceApplicationBuilder()
-    .configure("services.tapi-definition.port" -> "7001")
+    .configure("services.scapig-api-definition.port" -> "7001")
     .build()
   val wireMockServer = new WireMockServer(wireMockConfig().port(port))
 
@@ -41,7 +41,7 @@ class ApiDefinitionConnectorSpec extends UnitSpec with BeforeAndAfterAll with Be
   }
 
   "createAPI" should {
-    "create the API in tapi-definition" in new Setup {
+    "create the API in scapig-api-definition" in new Setup {
       stubFor(post(urlPathEqualTo("/api-definition"))
         .withRequestBody(equalToJson(Json.toJson(apiVersion).toString()))
         .willReturn(aResponse()

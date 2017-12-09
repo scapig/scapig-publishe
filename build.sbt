@@ -3,7 +3,7 @@ import _root_.play.sbt.PlayImport._
 import sbt.Keys._
 import sbt._
 
-name := "tapi-publisher"
+name := "scapig-publisher"
 
 version := "1.0"
 

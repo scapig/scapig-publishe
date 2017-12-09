@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class RamlRepositorySpec extends UnitSpec with BeforeAndAfterEach {
 
   lazy val fakeApplication: Application = new GuiceApplicationBuilder()
-    .configure("mongodb.uri" -> "mongodb://localhost:27017/tapi-publisher-test")
+    .configure("mongodb.uri" -> "mongodb://localhost:27017/scapig-publisher-test")
     .build()
 
   lazy val underTest = fakeApplication.injector.instanceOf[RamlRepository]

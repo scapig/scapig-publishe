@@ -16,7 +16,7 @@ class ApiScopeConnectorSpec extends UnitSpec with BeforeAndAfterAll with BeforeA
   val port = 7001
 
   val playApplication = new GuiceApplicationBuilder()
-    .configure("services.tapi-scope.port" -> "7001")
+    .configure("services.scapig-scope.port" -> "7001")
     .build()
   val wireMockServer = new WireMockServer(wireMockConfig().port(port))
 
@@ -40,7 +40,7 @@ class ApiScopeConnectorSpec extends UnitSpec with BeforeAndAfterAll with BeforeA
   }
 
   "createScope" should {
-    "create the scope in tapi-scope" in new Setup {
+    "create the scope in scapig-scope" in new Setup {
       stubFor(post(urlPathEqualTo("/scope"))
         .withRequestBody(equalToJson(Json.toJson(scope).toString()))
         .willReturn(aResponse()
