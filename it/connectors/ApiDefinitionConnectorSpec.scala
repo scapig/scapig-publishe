@@ -16,6 +16,7 @@ class ApiDefinitionConnectorSpec extends UnitSpec with BeforeAndAfterAll with Be
   val port = 7001
 
   val playApplication = new GuiceApplicationBuilder()
+    .configure("services.scapig-api-definition.host" -> "localhost")
     .configure("services.scapig-api-definition.port" -> "7001")
     .build()
   val wireMockServer = new WireMockServer(wireMockConfig().port(port))
