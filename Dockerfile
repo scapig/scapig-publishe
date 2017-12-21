@@ -6,3 +6,5 @@ RUN chmod +x start-docker.sh
 RUN tar xvf scapig-publisher-*.tgz
 
 EXPOSE 8040
+
+CMD ["sh", "start-docker.sh"]
