@@ -1,5 +1,7 @@
 ## scapig-publisher
 
+This is the microservice responsible for the publishing of APIs on the Scapig API Manager (http://www.scapig.com).
+
 ## Building
 ``
 sbt clean test it:test component:test
